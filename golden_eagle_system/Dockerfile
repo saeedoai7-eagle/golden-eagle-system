@@ -1,3 +1,6 @@
+# تحديد إصدار Docker الصريح
+# syntax=docker/dockerfile:1.4
+
 FROM python:3.11-slim-bullseye
 
 # تثبيت التبعيات الأساسية
