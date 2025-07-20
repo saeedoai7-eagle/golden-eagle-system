@@ -1,7 +1,0 @@
-app: golden-eagle
-services:
-  - name: golden-eagle
-    dockerfile: Dockerfile
-    ports:
-      - port: 8080
-        http_path: /
