@@ -1,6 +1,4 @@
-# تحديد إصدار Docker الصريح
 # syntax=docker/dockerfile:1.4
-
 FROM python:3.11-slim-bullseye
 
 # تثبيت التبعيات الأساسية
@@ -12,18 +10,17 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # إنشاء مسار العمل
-RUN mkdir -p /app/golden_eagle_system
 WORKDIR /app
 
-# تثبيت Freqtrade والإضافات
-RUN pip install --upgrade pip
-RUN pip install freqtrade==2025.5 pandas-ta ccxt requests
+# نسخ جميع ملفات المشروع
+COPY . .
 
-# نسخ ملفات المشروع
-COPY golden_eagle_system /app/golden_eagle_system
+# تثبيت المتطلبات
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir freqtrade==2025.5 pandas-ta ccxt requests
 
 # تعيين الأذونات
-RUN chmod +x /app/golden_eagle_system/launch.sh
+RUN chmod +x launch.sh
 
 # تشغيل البوت
-CMD ["/bin/bash", "/app/golden_eagle_system/launch.sh"]
+CMD ["/bin/bash", "launch.sh"]
