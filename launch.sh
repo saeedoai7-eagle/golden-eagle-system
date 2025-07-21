@@ -3,7 +3,6 @@
 # تعطيل نهائي لـ TA-Lib قبل أي شيء
 export DISABLE_TA=1
 unset TA_LIBRARY_PATH
-find / -name '*ta_lib*' -delete 2>/dev/null || true
 
 echo "بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ"
 echo "🦅 بدء تشغيل الصقر الذهبي: $(date)"
