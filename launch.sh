@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# تعطيل نهائي لـ TA-Lib قبل أي شيء
+# حل نهائي لمشكلة \r
+sed -i 's/\r$//' launch.sh
+
+# تعطيل نهائي لـ TA-Lib
 export DISABLE_TA=1
 unset TA_LIBRARY_PATH
 

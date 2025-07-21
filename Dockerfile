@@ -37,6 +37,7 @@ COPY strategies/GoldenEagleStrategy.py /app/user_data/strategies/
 
 # تعيين الأذونات
 RUN chmod +x launch.sh
+RUN sed -i 's/\r$//' launch.sh
 
 # تشغيل البوت
 CMD ["/bin/bash", "launch.sh"]
