@@ -20,12 +20,11 @@ COPY . .
 # إصلاح تنسيق الملفات لتناسب لينكس
 RUN sed -i 's/\r$//' launch.sh
 
-# تثبيت المتطلبات الكاملة مع إصدارات مجربة
+# تثبيت المتطلبات الكاملة مع orjson بدلاً من rapidjson
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir numpy==1.26.4 pandas==2.2.2 scipy==1.13.0 && \
-    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 && \
-    pip install --no-cache-dir rapidjson==0.9.1 && \
-    pip install --no-cache-dir freqtrade==2025.4  # إصدار ثابت ومجرب
+    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 orjson==3.10.3 && \
+    pip install --no-cache-dir freqtrade==2025.4
 
 # تعطيل TA-Lib نهائياً
 RUN pip uninstall -y TA-Lib 2>/dev/null || true && \
