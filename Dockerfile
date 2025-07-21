@@ -1,25 +1,5 @@
-# بناء Freqtrade مخصص بدون rapidjson
-FROM python:3.11-slim-bullseye AS builder
-
-# تثبيت التبعيات للبناء
-RUN apt-get update && apt-get install -y git build-essential
-
-# تحميل شيفرة Freqtrade
-RUN git clone https://github.com/freqtrade/freqtrade.git /freqtrade-src
-WORKDIR /freqtrade-src
-RUN git checkout 2025.5
-
-# إزالة rapidjson نهائياً
-RUN sed -i '/import rapidjson/d' freqtrade/commands/pairlist_commands.py && \
-    sed -i 's/rapidjson/json/g' freqtrade/commands/pairlist_commands.py && \
-    sed -i '/rapidjson/d' pyproject.toml
-
-# بناء الإصدار المعدل
-RUN pip install --upgrade pip && \
-    pip install poetry && \
-    poetry build -f wheel
-
-# ---------- البناء النهائي ----------
+# Dockerfile النهائي المضمون
+# syntax=docker/dockerfile:1.4
 FROM python:3.11-slim-bullseye
 
 # تثبيت التبعيات الأساسية
@@ -31,23 +11,34 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# نسخ Freqtrade المعدل
+# إنشاء مسار العمل
 WORKDIR /app
-COPY --from=builder /freqtrade-src/dist/freqtrade-2025.5-py3-none-any.whl .
 
-# تثبيت Freqtrade المخصص
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir freqtrade-2025.5-py3-none-any.whl && \
-    pip install --no-cache-dir numpy==1.26.4 pandas==2.2.2 scipy==1.13.0 && \
-    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 orjson==3.10.3
-
-# نسخ ملفات المشروع
+# نسخ جميع الملفات الضرورية
 COPY . .
 
-# إعدادات نهائية
-RUN chmod +x launch.sh && \
-    sed -i 's/\r$//' launch.sh && \
-    mkdir -p /app/user_data/strategies
+# إصلاح تنسيق الملفات لتناسب لينكس
+RUN sed -i 's/\r$//' launch.sh
+
+# تثبيت المتطلبات الكاملة مع إصدارات مجربة
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir numpy==1.26.4 pandas==2.2.2 scipy==1.13.0 && \
+    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 && \
+    pip install --no-cache-dir rapidjson==0.9.1 && \
+    pip install --no-cache-dir freqtrade==2025.4  # إصدار ثابت ومجرب
+
+# تعطيل TA-Lib نهائياً
+RUN pip uninstall -y TA-Lib 2>/dev/null || true && \
+    echo 'import sys; sys.modules["talib"] = None' > /usr/local/lib/python3.11/site-packages/talib_disable.py && \
+    echo 'import talib_disable' >> /usr/local/lib/python3.11/site-packages/sitecustomize.py
+
+# إنشاء مجلد الاستراتيجيات ونسخ الملفات
+RUN mkdir -p /app/user_data/strategies
+COPY config.json /app/user_data/
+COPY strategies/GoldenEagleStrategy.py /app/user_data/strategies/
+
+# تعيين الأذونات
+RUN chmod +x launch.sh
 
 # تشغيل البوت
 CMD ["/bin/bash", "launch.sh"]
