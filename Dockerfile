@@ -14,24 +14,46 @@ RUN apt-get update && apt-get install -y \
 # إنشاء مسار العمل
 WORKDIR /app
 
-# نسخ جميع الملفات الضرورية
+# نسخ ملفات المشروع
 COPY . .
 
-# إصلاح تنسيق الملفات لتناسب لينكس
+# إصلاح تنسيق الملفات
 RUN sed -i 's/\r$//' launch.sh
 
-# تثبيت المتطلبات الكاملة مع orjson بدلاً من rapidjson
+# تثبيت الاعتماديات الأساسية
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir numpy==1.26.4 pandas==2.2.2 scipy==1.13.0 && \
-    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 orjson==3.10.3 && \
-    pip install --no-cache-dir freqtrade==2025.4
+    pip install --no-cache-dir pandas-ta==0.3.14b0 ccxt==4.3.20 requests==2.32.3 orjson==3.10.3
+
+# تثبيت Freqtrade بدون أي اعتماديات
+RUN pip install --no-cache-dir --no-deps freqtrade==2025.4
+
+# تثبيت الاعتماديات الضرورية فقط (بدون TA-Lib)
+RUN pip install --no-cache-dir \
+    python-telegram-bot \
+    schedule \
+    tabulate \
+    sdnotify \
+    py_find_1st \
+    technical \
+    uvicorn \
+    websockets \
+    cachetools \
+    colorama \
+    rapidfuzz \
+    filelock \
+    jinja2 \
+    markupsafe \
+    python-dotenv \
+    pyyaml \
+    sqlalchemy \
+    typing-extensions
 
 # تعطيل TA-Lib نهائياً
-RUN pip uninstall -y TA-Lib 2>/dev/null || true && \
-    echo 'import sys; sys.modules["talib"] = None' > /usr/local/lib/python3.11/site-packages/talib_disable.py && \
+RUN echo 'import sys; sys.modules["talib"] = None' > /usr/local/lib/python3.11/site-packages/talib_disable.py && \
     echo 'import talib_disable' >> /usr/local/lib/python3.11/site-packages/sitecustomize.py
 
-# إنشاء مجلد الاستراتيجيات ونسخ الملفات
+# إعداد مجلدات الاستراتيجيات
 RUN mkdir -p /app/user_data/strategies
 COPY config.json /app/user_data/
 COPY strategies/GoldenEagleStrategy.py /app/user_data/strategies/
