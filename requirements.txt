@@ -2,6 +2,7 @@ freqtrade @ git+https://github.com/freqtrade/freqtrade.git@develop
 pandas-ta==0.3.14b0
 cryptography==42.0.5
 requests==2.32.3
-pyppeteer-stealth==2.8.6
+- pyppeteer-stealth==2.8.6
++ pyppeteer-stealth==2.7.4  # أحدث إصدار متوفر
 numpy==1.26.4
 pandas==2.2.2
