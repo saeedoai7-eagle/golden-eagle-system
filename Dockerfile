@@ -15,14 +15,12 @@ ENV PATH="/opt/venv/bin:$PATH"
 # نسخ وتركيب المتطلبات
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir wheel setuptools && \
     pip install --no-cache-dir -r requirements.txt
 
 # نسخ ملفات المشروع
 COPY . /app
 WORKDIR /app
-
-# تشغيل آلية الأمان
-RUN python -c "from oath import secure_keys; secure_keys()"
 
 # تشغيل السكربت الرئيسي
 CMD ["bash", "launch.sh"]
