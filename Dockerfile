@@ -1,11 +1,8 @@
 FROM python:3.11-slim
 
-# تثبيت المتطلبات الأساسية
+# تثبيت المتطلبات الأساسية فقط
 RUN apt-get update && apt-get install -y \
     build-essential \
-    libssl-dev \
-    libffi-dev \
-    git \
     && rm -rf /var/lib/apt/lists/*
 
 # إنشاء بيئة افتراضية
@@ -15,7 +12,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 # نسخ وتركيب المتطلبات
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir wheel setuptools && \
     pip install --no-cache-dir -r requirements.txt
 
 # نسخ ملفات المشروع

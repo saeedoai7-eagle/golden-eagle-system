@@ -1,6 +1,6 @@
 freqtrade @ git+https://github.com/freqtrade/freqtrade.git@develop
-pandas-ta==0.3.14b0  # الإصدار المتوفر فعلياً
-cryptography>=42.0
-requests>=2.32
-numpy>=1.26
-pandas>=2.2
+pandas-ta==0.3.14b0
+cryptography==42.0.5
+requests==2.32.3
+numpy==1.26.4
+pandas==2.2.2
