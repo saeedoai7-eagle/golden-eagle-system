@@ -1,14 +1,18 @@
-app: golden-eagle
+app: golden-eagle-system
 services:
-  - name: golden-eagle
-    docker:
-      dockerfile: Dockerfile
-      context: .
+  - name: golden-eagle-service
+    dockerfile: Dockerfile
     ports:
       - port: 8080
-        http_path: /
+        http_path: "/"
     env:
-      - name: TZ
-        value: Asia/Riyadh
-      - name: PYTHONUNBUFFERED
-        value: "1"
+      - name: CRYPTO_KEY
+        secret: true
+      - name: BINANCE_API_ENC
+        secret: true
+      - name: BINANCE_SECRET_ENC
+        secret: true
+    regions: [cdg]
+    scaling:
+      min: 1
+      max: 1
