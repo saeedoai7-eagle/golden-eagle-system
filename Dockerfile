@@ -1,10 +1,12 @@
 FROM python:3.11-slim
 
-# تنظيف تام لـ TA-Lib
-RUN apt-get update && apt-get purge -y libta-lib*
-
-# التبعيات الأساسية
-RUN apt-get install -y build-essential libssl-dev libffi-dev git
+# التحديث الحاسم: استبدال الأمر الخاطئ
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # إنشاء بيئة افتراضية
 RUN python -m venv /opt/venv
